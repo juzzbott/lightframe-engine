@@ -48,7 +48,7 @@
  */
 #define LF_ASSERT(expr) {                                                                       \
     if (!(expr)) {                                                                                \
-        LOG_FATAL(std::format("Assertion Failed: {0} at {1}:{2}", #expr, __FILE__, __LINE__));  \
+        LOG_FATAL("Assertion Failed: {} at {}:{}", #expr, __FILE__, __LINE__);  \
         lf_debug_break() ;                                                                      \
     }                                                                                           \
 }
@@ -62,7 +62,7 @@
  */
 #define LF_ASSERT_MSG(expr, msg) {                                                                                  \
     if (!(expr)) {                                                                                                    \
-        LOG_FATAL(std::format("Assertion Failed: {0} at {1}:{2} | Message: {3}", #expr, __FILE__, __LINE__, msg));  \
+        LOG_FATAL("Assertion Failed: {} at {}:{} | Message: {}", #expr, __FILE__, __LINE__, msg);  \
         lf_debug_break() ;                                                                                          \
     }                                                                                                               \
 }

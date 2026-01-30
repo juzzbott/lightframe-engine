@@ -39,6 +39,13 @@ public:
     unsigned int getShaderId() const override { return _shaderId; }
     
     /**
+     * @brief Sets an integer uniform variable.
+     * @param name The name of the uniform variable.
+     * @param value The integer value to set.
+     */
+    void setInt(std::string name, int value) override;
+    
+    /**
      * @brief Sets a vec2 uniform variable.
      * @param name The name of the uniform variable.
      * @param v1 The first component value.

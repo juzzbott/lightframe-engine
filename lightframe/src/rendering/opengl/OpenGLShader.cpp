@@ -59,6 +59,16 @@ void OpenGLShader::destroy() {
     _shaderId = 0;
 }
 
+void OpenGLShader::setInt(std::string name, int value) {
+    GLint uniformLoc = getUniformLoc(name);
+    
+    if (uniformLoc == -1) {
+        LOG_TRACE("Unable to find uniform with name {} in shader id {}.", name, _shaderId);
+        return;
+    }
+    glUniform1i(uniformLoc, value);
+}
+
 void OpenGLShader::setFloat2(std::string name, float v1, float v2) {
     GLint uniformLoc = getUniformLoc(name);
     

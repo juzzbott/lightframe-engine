@@ -55,7 +55,7 @@ private:
     // Collection of vertex buffers attached to this VAO.
     std::vector<VertexBuffer*> _vertexBuffers;
     // Index buffer associated with this VAO.
-    IndexBuffer* _indexBuffer;
+    IndexBuffer* _indexBuffer = nullptr;
     // Current vertex buffer index for attribute setup.
     unsigned int _vertexBufferIndex = 0;
 };

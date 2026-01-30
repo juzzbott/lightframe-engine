@@ -12,6 +12,7 @@
 #include "rendering/Buffer.h"
 #include "rendering/VertexArray.h"
 #include "rendering/Mesh.h"
+#include "rendering/Texture.h"
 #include "platform/Platform.h"
 
 glm::vec2 offset(-2.0f, 1.0f);
@@ -35,8 +36,10 @@ int main() {
         #version 450 core
         layout (location = 0) in vec3 position;
         layout (location = 1) in vec3 color;
+        layout (location = 2) in vec2 texCoord;
         
         out vec3 vColor;
+        out vec2 vTexCoord;
         
         uniform vec2 uOffset;
         uniform mat4 uProjection;
@@ -44,6 +47,7 @@ int main() {
         
         void main() {
             vColor = color;
+            vTexCoord = texCoord;
             gl_Position = uProjection * uView * vec4(position.x + uOffset.x, position.y + uOffset.y, position.z, 1.0);
         }
     )";
@@ -52,11 +56,17 @@ int main() {
         #version 450 core
         
         in vec3 vColor;
+        in vec2 vTexCoord;
         
         out vec4 FragColor;
         
+        uniform sampler2D uTexture1;
+        uniform sampler2D uTexture2;
+        
         void main() {
-            FragColor = vec4(vColor, 1.0);
+            //FragColor = vec4(vColor, 1.0);
+            FragColor = texture(uTexture1, vTexCoord);
+            //FragColor = mix(texture(uTexture1, vTexCoord), texture(uTexture2, vTexCoord), 0.5);
         }
     )";
     
@@ -64,6 +74,8 @@ int main() {
     shader->loadShader(vertexShaderSrc, fragmentShaderSrc);
     
     Mesh cubeMesh = Mesh::createCubeMesh();
+    std::unique_ptr<Texture2D> texture = Texture2D::create("/home/justin/Pictures/wallhaven-5g2y73.jpg");
+    //std::unique_ptr<Texture2D> texture2 = Texture2D::create("/home/justin/Pictures/wallhaven-5wj3z7.jpg");
     
     // Projection matrix param
     float fov = glm::radians(45.0f);
@@ -88,6 +100,11 @@ int main() {
         shader->setFloat2("uOffset", offset.x, offset.y);
         shader->setMat4("uProjection", projMatrix);
         shader->setMat4("uView", view);
+        shader->setInt("uTexture1", 0);
+        //shader->setInt("uTexture1", 1);
+                
+        texture->bind();
+        //texture2->bind(1);
         
         cubeMesh.getVertexBuffer()->bind();
         cubeMesh.getIndexBuffer()->bind();

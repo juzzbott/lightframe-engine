@@ -38,6 +38,13 @@ public:
     virtual unsigned int getShaderId() const = 0;
     
     /**
+     * @brief Sets an integer uniform variable.
+     * @param name The name of the uniform variable.
+     * @param value The integer value to set.
+     */
+    virtual void setInt(std::string name, int value) = 0;
+    
+    /**
      * @brief Sets a 2-component float uniform variable.
      * @param name The name of the uniform variable.
      * @param v1 The first float value.

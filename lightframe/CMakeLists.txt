@@ -43,15 +43,20 @@ add_library(lightframe
         src/rendering/RenderQueue.cpp
         src/rendering/Shader.h
         src/rendering/Shader.cpp
+        src/rendering/Texture.h
+        src/rendering/Texture.cpp
         src/rendering/VertexArray.h
         src/rendering/VertexArray.cpp
         src/rendering/opengl/OpenGLShader.h
         src/rendering/opengl/OpenGLShader.cpp
         src/rendering/opengl/OpenGLBuffer.h
         src/rendering/opengl/OpenGLBuffer.cpp
+        src/rendering/opengl/OpenGLTexture.h
+        src/rendering/opengl/OpenGLTexture.cpp
         src/rendering/opengl/OpenGLVertexArray.h
         src/rendering/opengl/OpenGLVertexArray.cpp
         src/glad.c
+        third-party/stb/stb_image.cpp
 )
 
 target_include_directories(lightframe 
