@@ -13,14 +13,14 @@
 #include <map>
 
 class OpenGLShader final : public Shader {
-public:    
+public:
+    
     /**
-     * @brief Compiles and links the shader program from source strings.
-     * @param vertSrc The vertex shader source code.
-     * @param fragSrc The fragment shader source code.
-     * @return True if compilation and linking succeed; otherwise false.
+     * @brief Creates a new Shader instance.
+     * @param shaderPath The file path to the shader source code.
+     * @return std::unique_ptr<Shader> A new Shader object.
      */
-    bool loadShader(std::string& vertSrc, std::string& fragSrc) override;
+    OpenGLShader(const std::string& shaderPath);
 
     /**
      * @brief Binds the shader program for subsequent draw calls.

@@ -4,22 +4,23 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
+
+enum class ShaderType {
+    Unknown = 0,
+    Vertex,
+    Fragment
+};
 
 class Shader {
 public:
+
     /**
      * @brief Creates a new Shader instance.
+     * @param shaderPath The file path to the shader source code.
      * @return std::unique_ptr<Shader> A new Shader object.
      */
-    static std::unique_ptr<Shader> create();
-    
-    /**
-     * @brief Loads vertex and fragment shader source code.
-     * @param vertSrc The vertex shader source code.
-     * @param fragSrc The fragment shader source code.
-     * @return bool True if shaders loaded successfully, false otherwise.
-     */
-    virtual bool loadShader(std::string& vertSrc, std::string& fragSrc) = 0;
+    static std::unique_ptr<Shader> create(const std::string& shaderPath);
 
     /**
      * @brief Activates this shader for rendering.
@@ -68,4 +69,18 @@ public:
      * @param matrix The 4x4 matrix value.
      */
     virtual void setMat4(std::string name, glm::mat4 matrix) = 0;
+    
+    /**
+     * @brief Loads shader source code from a file, separating different shader stages.
+     * @param shaderPath The file path to the shader source code.
+     * @return std::unordered_map<ShaderType, std::string> A map of shader stage types to their source code.
+     */
+    static std::unordered_map<ShaderType, std::string> loadShaderSources(const std::string& shaderPath);
+    
+    /**
+     * @brief Converts a shader type name to its corresponding ShaderType enum value.
+     * @param name The name of the shader type (e.g., "vertex", "fragment").
+     * @return ShaderType The corresponding ShaderType enum value.
+     */
+    static ShaderType shaderTypeFromName(std::string& name);
 };

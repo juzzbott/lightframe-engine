@@ -11,13 +11,21 @@
 #include <string>
 #include <iostream>
 
-bool OpenGLShader::loadShader(std::string& vertSrc, std::string& fragSrc) {
+OpenGLShader::OpenGLShader(const std::string& shaderPath) {
     
-    GLuint vertShaderId = compileShader(vertSrc, GL_VERTEX_SHADER);
-    GLuint fragShaderId = compileShader(fragSrc, GL_FRAGMENT_SHADER);
+    std::unordered_map shaderSources = loadShaderSources(shaderPath);
+    
+    // At a minimum, we need a vertex and fragment shader
+    if (!shaderSources.contains(ShaderType::Vertex) || !shaderSources.contains(ShaderType::Fragment)) {
+        LOG_WARN("Shaders must contain at least a vertex and fragment shader section.");
+        return;
+    }
+    
+    GLuint vertShaderId = compileShader(shaderSources[ShaderType::Vertex], GL_VERTEX_SHADER);
+    GLuint fragShaderId = compileShader(shaderSources[ShaderType::Fragment], GL_FRAGMENT_SHADER);
     
     if (vertShaderId == 0 || fragShaderId == 0) {
-        return false;
+        return;
     }
     
     GLuint shaderId = glCreateProgram();
@@ -31,15 +39,13 @@ bool OpenGLShader::loadShader(std::string& vertSrc, std::string& fragSrc) {
         char infoLog[512];
         glGetProgramInfoLog(shaderId, 512, nullptr, infoLog);
         LOG_WARN("Error linking shading program: {}", infoLog);
-        return false;
+        return;
     }
     
     glDeleteShader(vertShaderId);
     glDeleteShader(fragShaderId);
     
     _shaderId = shaderId;
-    return true;
-    
 }
 
 void OpenGLShader::use() const { 
