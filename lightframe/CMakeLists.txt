@@ -32,13 +32,19 @@ add_library(lightframe
         src/core/Logger.cpp
         src/core/ObjectId.h
         src/core/ObjectId.cpp
+        src/managers/ShaderManager.h
+        src/managers/ShaderManager.cpp
+        src/managers/TextureManager.h
+        src/managers/TextureManager.cpp
         src/rendering/Buffer.h
         src/rendering/Buffer.cpp
-        src/rendering/CommandBuffer.h
-        src/rendering/CommandBuffer.cpp
+        src/rendering/Material.h
+        src/rendering/Material.cpp
         src/rendering/Mesh.h
         src/rendering/Mesh.cpp
         src/rendering/RendererApi.h
+        src/rendering/Renderer.h
+        src/rendering/Renderer.cpp
         src/rendering/RenderQueue.h
         src/rendering/RenderQueue.cpp
         src/rendering/Shader.h
@@ -55,6 +61,8 @@ add_library(lightframe
         src/rendering/opengl/OpenGLTexture.cpp
         src/rendering/opengl/OpenGLVertexArray.h
         src/rendering/opengl/OpenGLVertexArray.cpp
+        src/rendering/opengl/OpenGLRenderer.h
+        src/rendering/opengl/OpenGLRenderer.cpp
         src/glad.c
         third-party/stb/stb_image.cpp
 )

@@ -9,12 +9,14 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Window.h"
+#include "managers/ShaderManager.h"
+#include "managers/TextureManager.h"
 #include "rendering/Shader.h"
-#include "rendering/Buffer.h"
-#include "rendering/VertexArray.h"
+#include "rendering/Material.h"
 #include "rendering/Mesh.h"
-#include "rendering/Texture.h"
+#include "rendering/Renderer.h"
 #include "platform/Platform.h"
+#include <rendering/RendererApi.h>
 
 glm::vec2 offset(-2.0f, 1.0f);
 
@@ -52,10 +54,16 @@ int main() {
         .vSyncEnabled = true
     });
     
-    std::unique_ptr<Shader> shader = Shader::create("/home/justin/Development/lightframe-engine/test-bed/assets/shaders/default.shader");
+    ShaderManager shaderManager;
+    ShaderHandle shaderHndl = shaderManager.loadShader("/home/justin/Development/lightframe-engine/test-bed/assets/shaders/default.shader", "default");
+    
+    TextureManager textureManager;
+    TextureHandle textureHndl = textureManager.loadTexture("/home/justin/Pictures/wallhaven-5g2y73.jpg", "frog_man");
+    
+    std::unique_ptr<Renderer> renderer = Renderer::create(shaderManager, textureManager);
     
     Mesh cubeMesh = Mesh::createCubeMesh();
-    std::unique_ptr<Texture2D> texture = Texture2D::create("/home/justin/Pictures/wallhaven-5g2y73.jpg");
+    //std::unique_ptr<Texture2D> texture = Texture2D::create("/home/justin/Pictures/wallhaven-5g2y73.jpg");
     //std::unique_ptr<Texture2D> texture2 = Texture2D::create("/home/justin/Pictures/wallhaven-5wj3z7.jpg");
     
     // Projection matrix param
@@ -68,7 +76,7 @@ int main() {
     glm::mat4 projMatrix = glm::perspective(fov, aspectRatio, nearPlane, farPlane);
     
     // View matrix (isometric-style camera)
-    glm::vec3 cameraPos = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f)) * 5.0f;
+    glm::vec3 cameraPos = glm::normalize(glm::vec3(0.0f, -1.0f, 1.0f)) * 5.0f;
     glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 upDir = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::mat4 view = glm::lookAt(cameraPos, targetPos, upDir);
@@ -76,28 +84,29 @@ int main() {
     Transform transform;
     glm::mat4 modelProj = createModelMatrix(transform);
     
+    Material material;
+    material.addShader(RenderPass::Geometry, shaderHndl);
+    material.setDiffuseMap(textureHndl);
+    
+    RenderCommand command = {
+        .mesh = &cubeMesh,
+        .material = &material,
+        .transform = projMatrix * view * modelProj,
+        .renderPass = RenderPass::Geometry,
+    };
+    
+    
     while (!window.shouldClose()) {
         window.clear();
         
-        shader->use();
-        shader->setMat4("uProjection", projMatrix);
-        shader->setMat4("uView", view);
-        shader->setMat4("uModel", modelProj);
-        shader->setInt("uTexture1", 0);
-        //shader->setInt("uTexture1", 1);
-                
-        texture->bind();
-        //texture2->bind(1);
-        
-        cubeMesh.getVertexBuffer()->bind();
-        cubeMesh.getIndexBuffer()->bind();
-        glDrawElements(GL_TRIANGLES, cubeMesh.getIndexBuffer()->getIndexCount(), GL_UNSIGNED_INT, 0);
+        // Renderer 
+        renderer->beginFrame();
+        renderer->submit(command);
+        renderer->endFrame();
         
         window.pollEvents();
         window.swapBuffers();
     }
-    
-    shader->destroy();
     
     window.shutdown();
     

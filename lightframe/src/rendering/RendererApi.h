@@ -51,13 +51,19 @@ enum class PrimitiveType {
     Lines       ///< Interpret vertices as lines (2 vertices per primitive)
 };
 
+enum class RenderPass : uint8_t {
+    Shadow = 1,
+    Geometry,
+    UI
+};
+
 /**
  * @brief Command to bind a rendering pipeline.
  * 
  * Activates the specified pipeline for subsequent draw operations.
  */
 struct BindPipelineCommand {
-    PipelineHandle pipeline;
+    ShaderHandle shader;
 };
 
 /**
@@ -119,9 +125,8 @@ using RendererApiCommand = std::variant<
  * @brief A handle representing a rendering pipeline.
  */
 struct RenderCommand {
-    PipelineHandle pipeline;
     Mesh* mesh;
     Material* material;
     glm::mat4 transform;
-    UniformHandle modelUniform;
+    RenderPass renderPass;
 };

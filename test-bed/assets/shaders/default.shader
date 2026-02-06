@@ -7,14 +7,12 @@ layout (location = 2) in vec2 texCoord;
 out vec3 vColor;
 out vec2 vTexCoord;
 
-uniform mat4 uProjection;
-uniform mat4 uView;
-uniform mat4 uModel;
+uniform mat4 uTransform;
 
 void main() {
     vColor = color;
     vTexCoord = texCoord;
-    gl_Position = uProjection * uView * uModel * vec4(position, 1.0);
+    gl_Position = uTransform * vec4(position, 1.0);
 }
 
 //:fragment

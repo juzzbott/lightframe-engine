@@ -9,7 +9,7 @@ void RenderQueue::submit(const RenderCommand& command) {
 
 void RenderQueue::sort() {
     std::sort(_commands.begin(), _commands.end(), [](const RenderCommand& a, const RenderCommand& b) {
-        return a.pipeline < b.pipeline;
+        return a.renderPass < b.renderPass;
     });
 }
 
