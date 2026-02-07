@@ -6,8 +6,9 @@
 #include <random>
 #include <thread>
 #include <sstream>
+#include <span>
 
-ObjectId::  ObjectId() : idBytes{0} {
+ObjectId::  ObjectId() : _idBytes{0} {
 
     using namespace std::chrono;
 
@@ -29,7 +30,7 @@ ObjectId::  ObjectId() : idBytes{0} {
     writeBytes(8, randomValue);
 }
 
-ObjectId::ObjectId(const std::string& id) : idBytes{0} {
+ObjectId::ObjectId(const std::string& id) : _idBytes{0} {
     if (id.length() != 24) {
         LOG_ERROR("Invalid object id: {}", id);
         return;
@@ -46,22 +47,36 @@ ObjectId::ObjectId(const std::string& id) : idBytes{0} {
 
         // Convert 2-character hex string to a byte
         const auto byte = static_cast<uint8_t>(std::stoi(strByte, nullptr, 16));
-        idBytes[i] = byte;
+        _idBytes[i] = byte;
     }
 
 }
 
 std::string ObjectId::toString() const {
     std::ostringstream oss;
-    for (const uint8_t byte : idBytes) {
+    for (const uint8_t byte : _idBytes) {
         oss << std::format("{:02x}", byte);
     }
     return oss.str();
 }
 
 void ObjectId::writeBytes(const size_t offset, const uint32_t value) {
-    idBytes[offset + 0] = (value >> 24) & 0xFF;
-    idBytes[offset + 1] = (value >> 16) & 0xFF;
-    idBytes[offset + 2] = (value >> 8) & 0xFF;
-    idBytes[offset + 3] = value & 0xFF;
+    _idBytes[offset + 0] = (value >> 24) & 0xFF;
+    _idBytes[offset + 1] = (value >> 16) & 0xFF;
+    _idBytes[offset + 2] = (value >> 8) & 0xFF;
+    _idBytes[offset + 3] = value & 0xFF;
+}
+
+ObjectId::ObjectId(std::span<const uint8_t> bytes) {
+    if (bytes.size() != 12) {
+        LOG_ERROR("Invalid ObjectId byte length: {}. Must be 12 bytes.", bytes.length());
+        return;
+    }
+    std::copy(bytes.begin(), bytes.end(), _idBytes.begin());
+}
+
+ObjectId ObjectId::empty() {
+    for (size_t i = 0; i < 12; i++) {
+        _idBytes[i] = 0x00;
+    }
 }

@@ -10,6 +10,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <span>
 
 class ObjectId {
 public:
@@ -23,6 +24,8 @@ public:
      * @param id The string representation of the ObjectId.
      */
     explicit ObjectId(const std::string& id);
+    
+    
 
     /**
      * @brief Converts the ObjectId to its string representation.
@@ -34,14 +37,20 @@ public:
      * @brief Returns the ObjectId as its 12-byte array representation.
      * @return The 12-byte array representing the ObjectId.
      */
-    std::array<uint8_t, 12> toBytes() const { return idBytes; }
+    std::array<uint8_t, 12> toBytes() const { return _idBytes; }
+    
+    /**
+     * @brief Returns an empty ObjectId (all bytes set to 0x00).
+     * @return An empty ObjectId.
+     */
+    static ObjectId empty();
 
     /**
      * @brief Equality operator for ObjectId.
      * @return True if the ObjectIds are equal, false otherwise.
      */
     bool operator==(const ObjectId& other) const {
-        return std::equal(idBytes.begin(), idBytes.end(), other.toBytes().begin());
+        return std::equal(_idBytes.begin(), _idBytes.end(), other.toBytes().begin());
     }
 
     /**
@@ -58,10 +67,10 @@ public:
      */
     bool operator<(const ObjectId& other) const {
         return std::lexicographical_compare(
-            idBytes.begin(), 
-            idBytes.end(),
-            other.idBytes.begin(),
-            other.idBytes.end()
+            _idBytes.begin(), 
+            _idBytes.end(),
+            other._idBytes.begin(),
+            other._idBytes.end()
         );
     }
 
@@ -71,10 +80,10 @@ public:
      */
     bool operator>(const ObjectId& other) const {
         return std::lexicographical_compare(
-            other.idBytes.begin(),
-            other.idBytes.end(),
-            idBytes.begin(), 
-            idBytes.end()
+            other._idBytes.begin(),
+            other._idBytes.end(),
+            _idBytes.begin(), 
+            _idBytes.end()
         );
     }
 
@@ -84,7 +93,7 @@ public:
      */
     static ObjectId min() {
         ObjectId id;
-        id.idBytes.fill(0x00);
+        id._idBytes.fill(0x00);
         return id;
     }
 
@@ -94,12 +103,12 @@ public:
      */
     static ObjectId max() {
         ObjectId id;
-        id.idBytes.fill(0xFF);
+        id._idBytes.fill(0xFF);
         return id;
     }
 
 private:
-    std::array<uint8_t, 12> idBytes;
+    std::array<uint8_t, 12> _idBytes;
 
     /**
      * @brief Writes a 32-bit value into the idBytes array at the specified offset.
@@ -107,7 +116,8 @@ private:
      * @param value The 32-bit value to write.
      */
     void writeBytes(size_t offset, uint32_t value);
-};
+    
+    ObjectId(std::span<const uint8_t> bytes);
 
 /**
  * @brief Hash specialization for ObjectId to allow its use in unordered containers.
