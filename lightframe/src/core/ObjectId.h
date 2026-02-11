@@ -117,7 +117,12 @@ private:
      */
     void writeBytes(size_t offset, uint32_t value);
     
+    /**
+     * @brief Constructs an ObjectId from a span of bytes.
+     * @param bytes The span of bytes to construct the ObjectId from. Must be exactly 12 bytes.
+     */
     ObjectId(std::span<const uint8_t> bytes);
+};
 
 /**
  * @brief Hash specialization for ObjectId to allow its use in unordered containers.

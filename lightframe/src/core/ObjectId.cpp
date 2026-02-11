@@ -2,6 +2,7 @@
 
 #include "core/Logger.h"
 
+#include <array>
 #include <chrono>
 #include <random>
 #include <thread>
@@ -69,14 +70,13 @@ void ObjectId::writeBytes(const size_t offset, const uint32_t value) {
 
 ObjectId::ObjectId(std::span<const uint8_t> bytes) {
     if (bytes.size() != 12) {
-        LOG_ERROR("Invalid ObjectId byte length: {}. Must be 12 bytes.", bytes.length());
+        LOG_ERROR("Invalid ObjectId byte length: {}. Must be 12 bytes.", bytes.size());
         return;
     }
     std::copy(bytes.begin(), bytes.end(), _idBytes.begin());
 }
 
 ObjectId ObjectId::empty() {
-    for (size_t i = 0; i < 12; i++) {
-        _idBytes[i] = 0x00;
-    }
+    static constexpr std::array<uint8_t, 12> zeroBytes{};
+    return ObjectId(std::span<const uint8_t>(zeroBytes));
 }

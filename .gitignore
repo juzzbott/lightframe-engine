@@ -75,3 +75,6 @@ Testing/
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+
+### CLion/JetBrains ###
+.idea/*

@@ -63,8 +63,21 @@ add_library(lightframe
         src/rendering/opengl/OpenGLVertexArray.cpp
         src/rendering/opengl/OpenGLRenderer.h
         src/rendering/opengl/OpenGLRenderer.cpp
+        src/scenes/GameObject.h
+        src/scenes/GameObject.cpp
+        src/scenes/GameObject3D.h
+        src/scenes/PerspectiveCamera.h
+        src/scenes/PerspectiveCamera.cpp
+        src/scenes/Scene.h
+        src/scenes/Scene.cpp
         src/glad.c
         third-party/stb/stb_image.cpp
+        src/scenes/components/Component.h
+        src/scenes/components/MeshRenderer.cpp
+        src/scenes/components/MeshRenderer.h
+        src/scenes/GameObject3D.cpp
+        src/scenes/GameObjectTemplates.h
+        src/scenes/SceneTemplates.h
 )
 
 target_include_directories(lightframe 
