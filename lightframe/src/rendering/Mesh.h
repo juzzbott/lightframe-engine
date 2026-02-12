@@ -42,7 +42,15 @@ public:
      * @brief Creates a cube mesh with predefined vertex and index data.
      */
     static Mesh createCubeMesh();
-        
+
+    /**
+    * @brief Creates a sphere mesh with configurable resolution.
+    * @param latitudeSegments Number of segments along latitude (vertical divisions).
+    * @param longitudeSegments Number of segments along longitude (horizontal divisions).
+    * @return Mesh The generated sphere mesh.
+    */
+    static Mesh createSphereMesh(int latitudeSegments, int longitudeSegments);
+
 private:
     // Vertex buffer containing mesh vertex data
     std::unique_ptr<VertexBuffer> _vertexBuffer;

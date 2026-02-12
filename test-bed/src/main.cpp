@@ -4,8 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Window.h"
-#include "managers/ShaderManager.h"
-#include "managers/TextureManager.h"
+#include "resources/ResourceManager.h"
 #include "rendering/Material.h"
 #include "rendering/Mesh.h"
 #include "rendering/Renderer.h"
@@ -41,15 +40,14 @@ int main() {
     Scene scene = Scene("main_level");
     scene.worldCamera.transform.position = glm::vec3(0.0f, -3.5f, 3.5f);
     
-    ShaderManager shaderManager;
-    ShaderHandle shaderHndl = shaderManager.loadShader("/home/justin/Development/lightframe-engine/test-bed/assets/shaders/default.shader", "default");
+    ResourceManager resourceManager;
+    ShaderHandle shaderHndl = resourceManager.load<Shader>("/home/justin/Development/lightframe-engine/test-bed/assets/shaders/default.shader", "default");
+    TextureHandle textureHndl = resourceManager.load<Texture2D>("/home/justin/Pictures/wallhaven-5g2y73.jpg", "frog_man");
     
-    TextureManager textureManager;
-    TextureHandle textureHndl = textureManager.loadTexture("/home/justin/Pictures/wallhaven-5g2y73.jpg", "frog_man");
-    
-    std::unique_ptr<Renderer> renderer = Renderer::create(shaderManager, textureManager);
+    std::unique_ptr<Renderer> renderer = Renderer::create(resourceManager);
     
     Mesh cubeMesh = Mesh::createCubeMesh();
+    Mesh sphereMesh = Mesh::createSphereMesh(640, 640);
     
     Material material;
     material.addShader(RenderPass::Geometry, shaderHndl);
@@ -65,7 +63,12 @@ int main() {
     player2->transform.rotation = glm::vec3(45.0f, 45.0f, 0.0f);
     scene.getGameObjects()[1]->addComponent<MeshRenderer>(&cubeMesh, &material);
 
-    
+    auto* player3 = scene.addGameObject<GameObject3D>(ObjectId());
+    player3->transform.position = glm::vec3(-2.0f, 1.0f, 0.0f);
+    player3->transform.rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    scene.getGameObjects()[2]->addComponent<MeshRenderer>(&sphereMesh, &material);
+
+    // Main Application Loop
     while (!window.shouldClose()) {
         window.clear();
         

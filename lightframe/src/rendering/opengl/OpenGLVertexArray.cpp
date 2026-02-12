@@ -87,6 +87,10 @@ void OpenGLVertexArray::addVertexBuffer(VertexBuffer* vertexBuffer) {
 
 void OpenGLVertexArray::setIndexBuffer(IndexBuffer* indexBuffer) {
     _indexBuffer = indexBuffer;
+    bind();
+    if (_indexBuffer) {
+        _indexBuffer->bind();
+    }
 }
 
 void OpenGLVertexArray::bind() const {

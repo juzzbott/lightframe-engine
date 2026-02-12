@@ -14,10 +14,12 @@ BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements)
 void BufferLayout::calcOffsetStride() {
     size_t offset = 0;
     _stride = 0;
+    _vertexLength = 0;
     for (auto& element : _elements) {
         element.offset = offset;
         offset += element.size;
         _stride += element.size;
+        _vertexLength += element.getElementCount();
     }
 }
 

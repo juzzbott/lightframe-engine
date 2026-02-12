@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <cmath>
 
 #include <memory>
 
@@ -72,4 +73,82 @@ Mesh Mesh::createCubeMesh() {
     
     return Mesh(std::move(vertexBuf), std::move(indexBuf), std::move(vertexArray));
     
+}
+
+/**
+ * @brief Generates sphere mesh data with configurable resolution.
+ * @param latitudeSegments Number of segments along latitude (vertical divisions).
+ * @param longitudeSegments Number of segments along longitude (horizontal divisions).
+ * @param outVertices Output vector for vertex data (pos, color, texCoords).
+ * @param outIndices Output vector for indices.
+ */
+static void generateSphereMeshData(int latitudeSegments, int longitudeSegments, std::vector<float>& outVertices, std::vector<unsigned int>& outIndices) {
+    constexpr float PI = 3.14159265359f;
+
+    // Default color (can be changed per-vertex if desired)
+    const float r = 0.7f, g = 0.7f, b = 0.9f;
+    for (int y = 0; y <= latitudeSegments; ++y) {
+        float v = float(y) / latitudeSegments;
+        float theta = v * PI; // [0, PI]
+        for (int x = 0; x <= longitudeSegments; ++x) {
+            float u = float(x) / longitudeSegments;
+            float phi = u * 2.0f * PI; // [0, 2PI]
+            // Spherical to Cartesian
+            float px = std::sin(theta) * std::cos(phi);
+            float py = std::cos(theta);
+            float pz = std::sin(theta) * std::sin(phi);
+            // Position
+            outVertices.push_back(px * 0.5f); // scale to radius 0.5
+            outVertices.push_back(py * 0.5f);
+            outVertices.push_back(pz * 0.5f);
+            // Color (can be set to something else if desired)
+            outVertices.push_back(r);
+            outVertices.push_back(g);
+            outVertices.push_back(b);
+            // TexCoords
+            outVertices.push_back(u);
+            outVertices.push_back(v);
+        }
+    }
+    // Indices
+    for (int y = 0; y < latitudeSegments; ++y) {
+        for (int x = 0; x < longitudeSegments; ++x) {
+            int i0 = y * (longitudeSegments + 1) + x;
+            int i1 = i0 + longitudeSegments + 1;
+            int i2 = i0 + 1;
+            int i3 = i1 + 1;
+            // Two triangles per quad
+            outIndices.push_back(i0);
+            outIndices.push_back(i1);
+            outIndices.push_back(i2);
+            outIndices.push_back(i2);
+            outIndices.push_back(i1);
+            outIndices.push_back(i3);
+        }
+    }
+}
+
+Mesh Mesh::createSphereMesh(int latitudeSegments, int longitudeSegments) {
+
+    std::vector<float> sphereVertices;
+    std::vector<unsigned int> sphereIndices;
+
+    generateSphereMeshData(latitudeSegments, longitudeSegments, sphereVertices, sphereIndices);
+
+    BufferLayout layout = BufferLayout({
+        BufferElement("pos", ShaderDataType::Float3, false),
+        BufferElement("color", ShaderDataType::Float3, false),
+        BufferElement("texCoords", ShaderDataType::Float2, false)
+    });
+
+    std::unique_ptr<VertexBuffer> vertexBuf = VertexBuffer::create(sphereVertices.data(), sphereVertices.size() * sizeof(float));
+    vertexBuf->setLayout(layout);
+
+    std::unique_ptr<IndexBuffer> indexBuf = IndexBuffer::create(sphereIndices.data(), sphereIndices.size() * sizeof(unsigned int));
+
+    std::unique_ptr<VertexArray> vertexArray = VertexArray::create();
+    vertexArray->addVertexBuffer(vertexBuf.get());
+    vertexArray->setIndexBuffer(indexBuf.get());
+
+    return Mesh(std::move(vertexBuf), std::move(indexBuf), std::move(vertexArray));
 }

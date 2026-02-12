@@ -32,10 +32,8 @@ add_library(lightframe
         src/core/Logger.cpp
         src/core/ObjectId.h
         src/core/ObjectId.cpp
-        src/managers/ShaderManager.h
-        src/managers/ShaderManager.cpp
-        src/managers/TextureManager.h
-        src/managers/TextureManager.cpp
+        src/resources/ResourceManager.h
+        src/resources/ResourceManager.cpp
         src/rendering/Buffer.h
         src/rendering/Buffer.cpp
         src/rendering/Material.h

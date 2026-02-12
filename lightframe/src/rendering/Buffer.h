@@ -11,8 +11,7 @@
  * @brief Enumeration of shader data types for vertex buffer layouts.
  */
 enum class ShaderDataType {
-    None = 0,
-    Float, 
+    Float = 1,
     Float2,
     Float3,
     Float4, 
@@ -110,6 +109,13 @@ public:
     const std::vector<BufferElement>& getElements() const { return _elements; }
 
     /**
+     * @brief Returns the number of values per vertex based on the buffer elements and their data types.
+     * This is calculated by summing the element counts of each buffer element, which corresponds to the number of individual values (e.g., floats) that make up a single vertex.
+     * @return The total number of values per vertex.
+     */
+    const unsigned int getVertexLength() const { return _vertexLength; }
+
+    /**
      * @brief Returns an iterator to the beginning of the buffer elements.
      * @return Iterator to the first element.
      */
@@ -138,6 +144,9 @@ private:
     std::vector<BufferElement> _elements;
     // Total byte stride between consecutive vertices
     uint32_t _stride;
+
+    // The number of values per vertex, calculated from the buffer element and shader type sizes.
+    uint32_t _vertexLength;
     
     /**
      * @brief Calculates the offset and stride for the buffer layout.
@@ -190,6 +199,12 @@ public:
      * @return unsigned int The renderer ID.
      */
     virtual unsigned int getRendererId() const = 0;
+
+    /**
+     * @brief Gets the number of vertices in this vertex buffer.
+     * @return unsigned int The vertex count.
+     */
+    virtual unsigned int getVertexCount() const = 0;
     
 };
 

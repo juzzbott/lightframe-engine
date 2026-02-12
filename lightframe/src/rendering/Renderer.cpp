@@ -1,15 +1,14 @@
 #include "Renderer.h"
 
-#include "managers/ShaderManager.h"
-#include "managers/TextureManager.h"
+#include "resources/ResourceManager.h"
 #include "rendering/opengl/OpenGLRenderer.h"
 #include "scenes/Scene.h"
 #include "scenes/components/MeshRenderer.h"
 
 #include <memory>
 
-std::unique_ptr<Renderer> Renderer::create(ShaderManager& shaderManager, TextureManager& textureManager) {
-    return std::make_unique<OpenGLRenderer>(shaderManager, textureManager);
+std::unique_ptr<Renderer> Renderer::create(ResourceManager& resourceManager) {
+    return std::make_unique<OpenGLRenderer>(resourceManager);
 }
 
 void Renderer::renderScene(const Scene& scene) {

@@ -26,7 +26,7 @@ public:
      * @param vertices Pointer to vertex data.
      * @param size Size of the vertex data in bytes.
      */
-    OpenGLVertexBuffer(float* vertices, uint32_t size);
+    OpenGLVertexBuffer(const float* vertices, uint32_t size);
     
     /**
      * @brief Deconstructs the OpenGL vertex buffer, releasing any allocated resources.
@@ -37,13 +37,13 @@ public:
      * @brief Gets the layout of this vertex buffer.
      * @return const BufferLayout& The buffer layout.
      */
-    const BufferLayout& getLayout() const { return _layout; };
+    const BufferLayout& getLayout() const override { return _layout; };
     
     /**
      * @brief Sets the layout of this vertex buffer.
      * @param layout The buffer layout to set.
      */
-    void setLayout(const BufferLayout& layout) { _layout = layout; };
+    void setLayout(const BufferLayout& layout) override { _layout = layout; };
 
     /**
      * @brief Binds this vertex buffer to the OpenGL context.
@@ -60,11 +60,18 @@ public:
      * @return unsigned int Renderer ID issued by OpenGL.
      */
     unsigned int getRendererId() const override { return _rendererId; };
+
+    /**
+     * @brief Gets the number of vertices in this vertex buffer.
+     * @return unsigned int The vertex count.
+     */
+    unsigned int getVertexCount() const override { return _vertexElementCount / _layout.getVertexLength(); }
     
 private:
     // OpenGL-generated buffer identifier.
     GLuint _rendererId;
     BufferLayout _layout;
+    uint32_t _vertexElementCount;
 };
 
 class OpenGLIndexBuffer final : public IndexBuffer {
