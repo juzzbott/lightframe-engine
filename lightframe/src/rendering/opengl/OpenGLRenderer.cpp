@@ -29,6 +29,36 @@ void OpenGLRenderer::endFrame() {
     
 }
 
+void OpenGLRenderer::applyRenderState(const RenderState &renderState) {
+
+    // Polygon mode
+    GLenum polygonMode = GL_FILL;
+    switch (renderState.polygonMode) {
+        case PolygonMode::Fill:  polygonMode = GL_FILL; break;
+        case PolygonMode::Line:  polygonMode = GL_LINE; break;
+        case PolygonMode::Point: polygonMode = GL_POINT; break;
+    }
+    glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
+
+    // Cull mode
+    if (renderState.cullMode == CullMode::None) {
+        glDisable(GL_CULL_FACE);
+    } else {
+        glEnable(GL_CULL_FACE);
+        glCullFace(renderState.cullMode == CullMode::Front ? GL_FRONT : GL_BACK);
+    }
+
+    // Depth test
+    if (renderState.depthTestEnabled) {
+        glEnable(GL_DEPTH_TEST);
+    } else {
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    // Depth write
+    glDepthMask(renderState.depthWriteEnabled ? GL_TRUE : GL_FALSE);
+}
+
 /**
  * RENDER PASSES
  */
@@ -51,6 +81,10 @@ void OpenGLRenderer::executeGeometryPass() {
         // Bind the VAO
         command.mesh->getVertexArray()->bind();
 
+        // Apply the render state
+        applyRenderState(command.renderState);
+
+        // Perform the draw call
         glDrawElements(GL_TRIANGLES, command.mesh->getIndexBuffer()->getIndexCount(), GL_UNSIGNED_INT, 0);
 
         // Update stats

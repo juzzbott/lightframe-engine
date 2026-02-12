@@ -11,7 +11,6 @@
 #include "platform/Platform.h"
 #include "scenes/Scene.h"
 #include "scenes/SceneTemplates.h"
-#include <rendering/RendererApi.h>
 
 #include "scenes/components/MeshRenderer.h"
 
@@ -47,7 +46,7 @@ int main() {
     std::unique_ptr<Renderer> renderer = Renderer::create(resourceManager);
     
     Mesh cubeMesh = Mesh::createCubeMesh();
-    Mesh sphereMesh = Mesh::createSphereMesh(640, 640);
+    Mesh sphereMesh = Mesh::createSphereMesh(12 , 12);
     
     Material material;
     material.addShader(RenderPass::Geometry, shaderHndl);

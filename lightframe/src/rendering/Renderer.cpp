@@ -28,11 +28,16 @@ void Renderer::renderScene(const Scene& scene) {
             continue;
         }
 
+        RenderState renderState;
+        renderState.polygonMode = PolygonMode::Line;
+        renderState.cullMode = CullMode::None;
+
         RenderCommand command = {
             .mesh = meshRenderer->getMesh(),
             .material = meshRenderer->getMaterial(),
             .transform = scene.worldCamera.buildViewProjectionMatrix() * gameObject3D->transform.createModelMatrix(),
             .renderPass = RenderPass::Geometry,
+            .renderState = renderState
         };
         submit(command);
 

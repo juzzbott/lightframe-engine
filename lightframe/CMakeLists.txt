@@ -40,7 +40,6 @@ add_library(lightframe
         src/rendering/Material.cpp
         src/rendering/Mesh.h
         src/rendering/Mesh.cpp
-        src/rendering/RendererApi.h
         src/rendering/Renderer.h
         src/rendering/Renderer.cpp
         src/rendering/RenderQueue.h

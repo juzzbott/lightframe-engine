@@ -2,7 +2,6 @@
 
 #include "resources/ResourceManager.h"
 #include "rendering/Renderer.h"
-#include "rendering/RendererApi.h"
 #include "rendering/RenderQueue.h"
 
 class OpenGLRenderer final : public Renderer {
@@ -14,17 +13,21 @@ public:
     */
     explicit OpenGLRenderer(ResourceManager& resourceManager);
 
+protected:
+
+    void applyRenderState(const RenderState &renderState) override;
+
     /**
      * @brief Begins the frame for rendering.
      */
     void beginFrame() override;
-    
+
     /**
      * @brief Submits a render command to the renderer.
      * @param command The render command to submit.
      */
     void submit(const RenderCommand& command) override;
-    
+
     /**
      * @brief Ends the frame for rendering.
      */

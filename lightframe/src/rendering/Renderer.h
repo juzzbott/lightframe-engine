@@ -1,11 +1,97 @@
 #pragma once
 
-#include "resources/ResourceManager.h"
-#include "RendererApi.h"
 #include "scenes/Scene.h"
 
 #include <memory>
 
+// Forward declarations
+class Mesh;
+class Material;
+class ResourceManager;
+
+/**
+ * @brief Handle type for referencing GPU buffer objects.
+ *
+ * Used to identify vertex buffers, index buffers, and other buffer resources.
+ */
+using BufferHandle = uint32_t;
+
+/**
+ * @brief Handle type for referencing GPU texture objects.
+ *
+ * Used to identify texture resources for sampling in shaders.
+ */
+using TextureHandle = uint32_t;
+
+/**
+ * @brief Handle type for referencing compiled shader programs.
+ *
+ * Identifies a compiled and linked shader program on the GPU.
+ */
+using ShaderHandle = uint32_t;
+
+/**
+ * @brief Handle type for referencing rendering pipelines.
+ *
+ * Encapsulates shader programs and rendering state configurations.
+ */
+using PipelineHandle = uint32_t;
+
+/**
+ * @brief Handle type for referencing uniform buffer objects.
+ *
+ * Used to identify uniform buffers for shader parameter updates.
+ */
+using UniformHandle = uint32_t;
+
+enum class PolygonMode : uint32_t {
+    Fill = 1,
+    Line,
+    Point
+};
+
+enum class CullMode : uint32_t {
+    None = 0,
+    Front,
+    Back
+};
+
+struct RenderState {
+    PolygonMode polygonMode = PolygonMode::Fill;
+    CullMode cullMode = CullMode::Back;
+    bool depthTestEnabled = true;
+    bool depthWriteEnabled = true;
+    bool blendEnabled = false;
+};
+
+/**
+ * @brief Defines the render pass for a render command.
+ *
+ * Used to categorise rendering commands into different stages of the rendering pipeline (e.g., shadow pass, geometry pass, UI pass).
+ */
+enum class RenderPass : uint8_t {
+    Shadow = 1,
+    Geometry,
+    UI
+};
+
+/**
+ * @typedef PipelineHandle
+ * @brief A handle representing a rendering pipeline.
+ */
+struct RenderCommand {
+    Mesh* mesh;
+    Material* material;
+    glm::mat4 transform;
+    RenderPass renderPass;
+    RenderState renderState;
+};
+
+/**
+ * @brief Struct to hold rendering statistics for performance monitoring and debugging.
+ *
+ * This struct can be used to track the number of draw calls, vertices rendered, and objects rendered during a frame. It can be useful for optimizing rendering performance and identifying bottlenecks in the rendering pipeline.
+ */
 struct RenderStats {
     uint32_t drawCalls = 0;
     uint32_t verticesRendered = 0;
@@ -50,5 +136,11 @@ protected:
      * @brief Ends the current frame for rendering. This method is called at the end of the renderScene method and is responsible for finalizing any state or presenting the rendered frame to the screen. The implementation will depend on the specific rendering API being used.
      */
     virtual void endFrame() = 0;
+
+    /**
+     * @brief Applies the specified render state settings. This method is called for each render command to set the appropriate rendering state (e.g., polygon mode, cull mode, depth test, blending) before issuing draw calls. The implementation will depend on the specific rendering API being used and may involve setting OpenGL states, DirectX rasterizer states, or Vulkan pipeline states.
+     * @param renderState The RenderState struct containing the desired rendering state settings for the current render command.
+     */
+    virtual void applyRenderState(const RenderState& renderState) = 0;
 
 };
